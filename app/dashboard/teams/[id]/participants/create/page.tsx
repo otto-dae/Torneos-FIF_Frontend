@@ -1,13 +1,15 @@
 'use client';
 
-import { useRouter, useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useState, Suspense } from 'react';
 import { authHeaders } from '@/app/lib/auth';
 
-
-export default function CreateParticipantPage() {
+function CreateParticipantForm() {
     const router = useRouter();
-    const { id } = useParams();
+    const params = useParams();
+    const id = params.id as string;
+    const searchParams = useSearchParams();
+    const tournament_id = searchParams.get('tournament_id');
     const [form, setForm] = useState({ name: '', phone: '', email: '' });
     const [error, setError] = useState('');
 
@@ -22,7 +24,7 @@ export default function CreateParticipantPage() {
                 name: form.name,
                 phone: form.phone,
                 email: form.email,
-                team_id: parseInt(id as string),
+                team_id: parseInt(id),
             }),
         });
 
@@ -33,20 +35,20 @@ export default function CreateParticipantPage() {
             return;
         }
 
-        router.push(`/dashboard/teams/${id}/participants`);
+        router.push(`/dashboard/teams/${id}/participants?tournament_id=${tournament_id}`);
     };
 
     return (
         <div>
-            <h1>Add Participant</h1>
+            <h1>Agregar Participante</h1>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Name</label><br />
+                    <label>Nombre</label><br />
                     <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
                 </div>
                 <br />
                 <div>
-                    <label>Phone</label><br />
+                    <label>Telefono</label><br />
                     <input type="text" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
                 </div>
                 <br />
@@ -56,9 +58,19 @@ export default function CreateParticipantPage() {
                 </div>
                 <br />
                 {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit">Add</button>
-                <button type="button" onClick={() => router.push(`/dashboard/teams/${id}/participants`)}>Cancel</button>
+                <button type="submit">Agregar</button>
+                <button type="button" onClick={() => router.push(`/dashboard/teams/${id}/participants?tournament_id=${tournament_id}`)}>
+                    Cancelar
+                </button>
             </form>
         </div>
+    );
+}
+
+export default function CreateParticipantPage() {
+    return (
+        <Suspense>
+            <CreateParticipantForm />
+        </Suspense>
     );
 }

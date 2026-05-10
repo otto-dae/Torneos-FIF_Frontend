@@ -41,19 +41,17 @@ export default function DashboardPage() {
                 <>
                     <button onClick={handleLogout}>Logout</button>
                     <button onClick={() => router.push('/dashboard/tournaments/create')}>Crear Torneo</button>
-                    <button onClick={() => router.push('/dashboard/teams')}>Gestionar Equipos</button>
-                    <button onClick={() => router.push('/dashboard/matches')}>Gestionar Partidos</button>
                     <button onClick={() => router.push('/dashboard/administrators/create')}>Crear Admin</button>
                 </>
             ) : (
                 <button onClick={() => router.push('/login')}>Admin</button>
             )}
-
             <button onClick={() => router.push('/dashboard/logs')}>Historial</button>
             <hr />
             {tournaments.map((t: any) => (
                 <div key={t.id}>
                     <h2>{t.name} — {t.discipline}</h2>
+                    {t.finished && <p>Campeon: {t.winner}</p>}
                     <table border={1} cellPadding={8}>
                         <thead>
                             <tr>
@@ -85,8 +83,8 @@ export default function DashboardPage() {
                         </tbody>
                     </table>
                     <br />
-                    <button onClick={() => router.push(`/dashboard/matches/view?tournament_id=${t.id}`)}>
-                        Ver Partidos
+                    <button onClick={() => router.push(`/dashboard/tournaments/${t.id}`)}>
+                        Ver Torneo
                     </button>
                     <hr />
                 </div>

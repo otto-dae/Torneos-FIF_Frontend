@@ -14,13 +14,12 @@ export function middleware(request: NextRequest) {
     }
 
     const isAdminOnly =
-        path === '/dashboard/matches' ||
         path.startsWith('/dashboard/tournaments/create') ||
         path.startsWith('/dashboard/teams/create') ||
-        path.startsWith('/dashboard/teams/') && path.includes('/participants/create') ||
         path.startsWith('/dashboard/administrators') ||
-        path.startsWith('/dashboard/phase-matches') ||
-        /^\/dashboard\/matches\/\d+\/update/.test(path);
+        path.startsWith('/dashboard/teams/') && path.includes('/participants/create') ||
+        /^\/dashboard\/matches\/\d+\/update/.test(path) ||
+        /^\/dashboard\/phase-matches\/\d+\/update/.test(path);
 
     if (isAdminOnly && !token) {
         return NextResponse.redirect(new URL('/login', request.url));

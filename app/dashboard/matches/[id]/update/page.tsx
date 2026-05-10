@@ -53,7 +53,7 @@ export default function UpdateMatchPage() {
             return;
         }
     
-        router.push(`/dashboard/matches/view?tournament_id=${tournamentId}`);
+        router.push(`/dashboard/tournaments/${tournamentId}`);
     };
 
     return (

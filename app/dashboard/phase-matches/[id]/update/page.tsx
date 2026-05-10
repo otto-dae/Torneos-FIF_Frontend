@@ -1,40 +1,43 @@
 'use client';
 
-import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useState, Suspense } from 'react';
 import { authHeaders } from '@/app/lib/auth';
 
-export default function UpdatePhaseMatchPage() {
+function UpdatePhaseMatchForm() {
     const router = useRouter();
     const params = useParams();
     const id = params.id as string;
+    const searchParams = useSearchParams();
+    const tournament_id = searchParams.get('tournament_id');
     const [form, setForm] = useState({ gf: '', gc: '', datematch: '' });
     const [error, setError] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-    
+
         const body: any = {};
         if (form.datematch) body.datematch = form.datematch;
         body.gf = form.gf !== '' ? parseInt(form.gf) : 0;
         body.gc = form.gc !== '' ? parseInt(form.gc) : 0;
-    
+
         const res = await fetch(`http://127.0.0.1:8000/main/phase-matches/${id}/update/`, {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify(body),
         });
-    
+
         const data = await res.json();
-    
+
         if (!res.ok) {
             setError(data.error);
             return;
         }
-    
-        router.back();
+
+        router.push(`/dashboard/tournaments/${tournament_id}`);
     };
+
     return (
         <div>
             <h1>Editar Partido Eliminatorio</h1>
@@ -56,8 +59,16 @@ export default function UpdatePhaseMatchPage() {
                 <br />
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 <button type="submit">Guardar</button>
-                <button type="button" onClick={() => router.back()}>Cancelar</button>
+                <button type="button" onClick={() => router.push(`/dashboard/tournaments/${tournament_id}`)}>Cancelar</button>
             </form>
         </div>
+    );
+}
+
+export default function UpdatePhaseMatchPage() {
+    return (
+        <Suspense>
+            <UpdatePhaseMatchForm />
+        </Suspense>
     );
 }
