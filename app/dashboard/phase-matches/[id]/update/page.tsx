@@ -4,32 +4,12 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { authHeaders } from '@/app/lib/auth';
 
-export default function UpdateMatchPage() {
+export default function UpdatePhaseMatchPage() {
     const router = useRouter();
     const params = useParams();
     const id = params.id as string;
     const [form, setForm] = useState({ gf: '', gc: '', datematch: '' });
-    const [match, setMatch] = useState<any>(null);
     const [error, setError] = useState('');
-
-    const [tournamentId, setTournamentId] = useState('');
-
-    useEffect(() => {
-        fetch('http://127.0.0.1:8000/main/matches/')
-            .then(res => res.json())
-            .then(data => {
-                const found = data.find((m: any) => m.id === parseInt(id));
-                if (found) {
-                    setMatch(found);
-                    setTournamentId(found.tournament_id);
-                    setForm({
-                        gf: found.gf !== null ? String(found.gf) : '',
-                        gc: found.gc !== null ? String(found.gc) : '',
-                        datematch: found.datematch || '',
-                    });
-                }
-            });
-    }, [id]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,7 +20,7 @@ export default function UpdateMatchPage() {
         body.gf = form.gf !== '' ? parseInt(form.gf) : 0;
         body.gc = form.gc !== '' ? parseInt(form.gc) : 0;
     
-        const res = await fetch(`http://127.0.0.1:8000/main/matches/${id}/update/`, {
+        const res = await fetch(`http://127.0.0.1:8000/main/phase-matches/${id}/update/`, {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify(body),
@@ -53,13 +33,11 @@ export default function UpdateMatchPage() {
             return;
         }
     
-        router.push(`/dashboard/matches/view?tournament_id=${tournamentId}`);
+        router.back();
     };
-
     return (
         <div>
-            <h1>Editar Partido</h1>
-            {match && <p>{match.team_1} vs {match.team_2}</p>}
+            <h1>Editar Partido Eliminatorio</h1>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Fecha</label><br />
@@ -78,7 +56,7 @@ export default function UpdateMatchPage() {
                 <br />
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 <button type="submit">Guardar</button>
-                <button type="button" onClick={() => router.push('/dashboard/matches')}>Cancelar</button>
+                <button type="button" onClick={() => router.back()}>Cancelar</button>
             </form>
         </div>
     );

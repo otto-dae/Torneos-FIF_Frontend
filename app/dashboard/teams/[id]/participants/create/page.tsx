@@ -2,6 +2,8 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { useState } from 'react';
+import { authHeaders } from '@/app/lib/auth';
+
 
 export default function CreateParticipantPage() {
     const router = useRouter();
@@ -15,7 +17,7 @@ export default function CreateParticipantPage() {
 
         const res = await fetch('http://127.0.0.1:8000/main/participants/create/', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify({
                 name: form.name,
                 phone: form.phone,

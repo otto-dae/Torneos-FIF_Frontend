@@ -1,12 +1,19 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { authHeaders } from '@/app/lib/auth';
 
-export default function CreateTeamPage() {
+
+function CreateTeamForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [tournaments, setTournaments] = useState([]);
-    const [form, setForm] = useState({ name: '', logo: '', tournament_id: '' });
+    const [form, setForm] = useState({
+        name: '',
+        logo: '',
+        tournament_id: searchParams.get('tournament_id') || ''
+    });
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -21,7 +28,7 @@ export default function CreateTeamPage() {
 
         const res = await fetch('http://127.0.0.1:8000/main/teams/create/', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify({
                 name: form.name,
                 logo: form.logo,
@@ -41,10 +48,10 @@ export default function CreateTeamPage() {
 
     return (
         <div>
-            <h1>Create Team</h1>
+            <h1>Agregar Equipo</h1>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Name</label><br />
+                    <label>Nombre</label><br />
                     <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
                 </div>
                 <br />
@@ -54,9 +61,9 @@ export default function CreateTeamPage() {
                 </div>
                 <br />
                 <div>
-                    <label>Tournament</label><br />
+                    <label>Torneo</label><br />
                     <select value={form.tournament_id} onChange={e => setForm({ ...form, tournament_id: e.target.value })} required>
-                        <option value="">Select tournament</option>
+                        <option value="">Seleccionar torneo</option>
                         {tournaments.map((t: any) => (
                             <option key={t.id} value={t.id}>{t.name}</option>
                         ))}
@@ -64,9 +71,17 @@ export default function CreateTeamPage() {
                 </div>
                 <br />
                 {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit">Create</button>
-                <button type="button" onClick={() => router.push('/dashboard/teams')}>Cancel</button>
+                <button type="submit">Agregar</button>
+                <button type="button" onClick={() => router.push('/dashboard/teams')}>Cancelar</button>
             </form>
         </div>
+    );
+}
+
+export default function CreateTeamPage() {
+    return (
+        <Suspense>
+            <CreateTeamForm />
+        </Suspense>
     );
 }

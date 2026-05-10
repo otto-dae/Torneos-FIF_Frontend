@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { authHeaders } from '@/app/lib/auth';
 
 export default function CreateTournamentPage() {
     const router = useRouter();
@@ -21,7 +22,7 @@ export default function CreateTournamentPage() {
 
         const res = await fetch('http://127.0.0.1:8000/main/tournaments/create/', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify({
                 name: form.name,
                 noteams: parseInt(form.noteams),

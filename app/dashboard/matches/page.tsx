@@ -3,9 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function MatchesPage() {
+export default function ManageMatchesPage() {
     const router = useRouter();
     const [tournaments, setTournaments] = useState([]);
+    const [teams, setTeams] = useState([]);
     const [matchesByTournament, setMatchesByTournament] = useState<any>({});
 
     useEffect(() => {
@@ -23,30 +24,16 @@ export default function MatchesPage() {
         });
     }, []);
 
-    const handleGenerate = async (tournament_id: number) => {
-        const res = await fetch('http://127.0.0.1:8000/main/matches/generate/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tournament_id }),
-        });
-        const data = await res.json();
-        if (res.ok) {
-            window.location.reload();
-        } else {
-            alert(data.error);
-        }
-    };
-
     return (
         <div>
-            <h1>Partidos</h1>
+            <h1>Gestionar Partidos</h1>
             <button onClick={() => router.push('/dashboard')}>Back</button>
             <hr />
             {tournaments.map((t: any) => (
                 <div key={t.id}>
                     <h2>{t.name} — {t.discipline}</h2>
                     {!matchesByTournament[t.id] ? (
-                        <button onClick={() => handleGenerate(t.id)}>Generar Calendario</button>
+                        <p>Calendario pendiente — agrega los equipos requeridos para generarlo automáticamente.</p>
                     ) : (
                         <table border={1} cellPadding={8}>
                             <thead>
