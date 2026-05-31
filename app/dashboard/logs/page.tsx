@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import style from '../../../styles/centralized.module.css';
 
 export default function LogsPage() {
     const router = useRouter();
@@ -15,27 +17,41 @@ export default function LogsPage() {
 
     return (
         <div>
-            <h1>Historial de Cambios</h1>
-            <button onClick={() => router.push('/dashboard')}>Back</button>
-            <hr />
-            <table border={1} cellPadding={8}>
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Admin</th>
-                        <th>Accion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {logs.map((l: any) => (
-                        <tr key={l.id}>
-                            <td>{l.date}</td>
-                            <td>{l.admin}</td>
-                            <td>{l.action}</td>
+            <header className={style.Header}>
+                <Image
+                    src="/Graphics/Troyan.png"
+                    alt="Logo"
+                    width={50}
+                    height={50}
+                    onClick={() => router.push('/dashboard')}
+                    style={{ cursor: 'pointer' }}
+                />
+                <h1 className={style.text}>Historial de Cambios</h1>
+                <button className={style.btn} onClick={() => router.push('/dashboard')} >
+                    Back
+                </button>
+            </header>
+
+            <div className={style.secondaryDiv}>
+                <table className={style.table}>
+                    <thead>
+                        <tr className={style.tableHead}>
+                            <th className={style.left}>Fecha</th>
+                            <th>Admin</th>
+                            <th className={style.right}>Accion</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {logs.map((l: any) => (
+                            <tr key={l.id}>
+                                <td>{l.date}</td>
+                                <td>{l.admin}</td>
+                                <td>{l.action}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

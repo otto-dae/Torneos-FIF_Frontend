@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { authHeaders } from '@/app/lib/auth';
+import styles from '../../../../styles/centralized.module.css';
+import Image from 'next/image';
 
 export default function CreateAdministratorPage() {
     const router = useRouter();
@@ -31,27 +33,46 @@ export default function CreateAdministratorPage() {
 
     return (
         <div>
-            <h1>Crear Administrador</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Nombre</label><br />
-                    <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+            <header className={styles.Header}>
+                <Image
+                    src="/Graphics/Troyan.png"
+                    alt="Logo"
+                    width={50}
+                    height={50}
+                    onClick={() => router.push('/dashboard')}
+                    style={{ cursor: 'pointer' }}
+                />
+                <h1 className={styles.text}>Create Administrator</h1>
+                <button onClick={() => router.push('/dashboard')} className={styles.btn2}>
+                     Back
+                </button>
+            </header>
+            <div className={styles.mainContainer}>
+                <div className={styles.subContainer}>
+                    <form onSubmit={handleSubmit} className={styles.formContainer}>
+                        <div>
+                            <label className={styles.textLabel}>Nombre</label><br />
+                            <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required className={styles.textInput} />
+                        </div>
+                        <br />
+                        <div>
+                            <label className={styles.textLabel}>Email</label><br />
+                            <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required className={styles.textInput} />
+                        </div>
+                        <br />
+                        <div>
+                            <label className={styles.textLabel}>Password</label><br />
+                            <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required className={styles.textInput} />
+                        </div>
+                        <br />
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                        <button type="button" onClick={() => router.push('/dashboard')} className={styles.btnCancel}>
+                            Cancelar
+                        </button>
+                        <button type="submit" className={styles.btn2}>Crear</button>
+                    </form>
                 </div>
-                <br />
-                <div>
-                    <label>Email</label><br />
-                    <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
-                </div>
-                <br />
-                <div>
-                    <label>Password</label><br />
-                    <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
-                </div>
-                <br />
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit">Crear</button>
-                <button type="button" onClick={() => router.push('/dashboard')}>Cancelar</button>
-            </form>
+            </div>
         </div>
     );
 }

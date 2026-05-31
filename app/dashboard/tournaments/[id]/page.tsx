@@ -3,6 +3,8 @@
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { authHeaders } from '@/app/lib/auth';
+import Image from 'next/image';
+import style from '../../../../styles/centralized.module.css';
 
 export default function TournamentPage() {
     const router = useRouter();
@@ -74,136 +76,128 @@ useEffect(() => {
 
     return (
         <div>
-            <h1>{tournament.name} — {tournament.discipline}</h1>
-            <button onClick={() => router.push('/dashboard')}>Back</button>
-            {isAdmin && (
-                <>
-                    <button onClick={() => router.push(`/dashboard/teams/create?tournament_id=${id}`)}>Agregar Equipo</button>
-                    {!tournament.phase_started && (
-                        <button onClick={handleStartPhase}>Terminar Fase de Tabla</button>
-                    )}
-                    {tournament.phase_started && !tournament.finished && (
-                        <button onClick={handleFinishTournament}>Terminar Torneo</button>
-                    )}
-                </>
-            )}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-
+            <header className={style.Header}>
+                <Image
+                    src="/Graphics/Troyan.png"
+                    alt="Logo"
+                    width={50}
+                    height={50}
+                    onClick={() => router.push('/dashboard')}
+                    style={{ cursor: 'pointer' }}
+                />
+                <h1 className={style.text}>Partidos — {tournament.name} — {tournament.discipline}</h1>
+                <button className={style.btn} onClick={() => router.push('/dashboard')} >
+                    Back
+                </button>
+            </header>
+            
+                {isAdmin && (
+                    <div className={style.secondaryDiv}>
+                        <>
+                            <button onClick={() => router.push(`/dashboard/teams?tournament_id=${id}`)} className={style.btn2}>
+                                Equipos
+                            </button>
+                            {!tournament.phase_started && (
+                                <button onClick={handleStartPhase} className={style.btn2}>
+                                    Terminar Fase de Tabla
+                                </button>
+                            )}
+                            {tournament.phase_started && !tournament.finished && (
+                                <button onClick={handleFinishTournament} className={style.btn2}>
+                                    Terminar Torneo
+                                </button>
+                            )}
+                        </>
+                    </div>
+                )}
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+            
             {tournament.finished && (
-                <h2>Campeon: {tournament.winner}</h2>
-            )}
-
-            <hr />
-            <h2>Clasificacion</h2>
-            <table border={1} cellPadding={8}>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Equipo</th>
-                        <th>PJ</th>
-                        <th>PG</th>
-                        <th>PE</th>
-                        <th>PP</th>
-                        <th>GF</th>
-                        <th>GC</th>
-                        <th>Pts</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {teams.map((t: any, index: number) => (
-                        <tr key={t.id}>
-                            <td>{index + 1}</td>
-                            <td>
-                                <span
-                                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                                    onClick={() => router.push(`/dashboard/teams/${t.id}/participants?tournament_id=${id}`)}
-                                >
-                                    {t.name}
-                                </span>
-                            </td>
-                            <td>{t.pj}</td>
-                            <td>{t.pg}</td>
-                            <td>{t.pe}</td>
-                            <td>{t.pp}</td>
-                            <td>{t.gf}</td>
-                            <td>{t.gc}</td>
-                            <td>{t.points}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-            <hr />
-            <h2>Partidos</h2>
-            {sortedDates.map(date => (
-                <div key={date}>
-                    <h3>{date}</h3>
-                    <table border={1} cellPadding={8}>
-                        <thead>
-                            <tr>
-                                <th>Local</th>
-                                <th>Resultado</th>
-                                <th>Visitante</th>
-                                {isAdmin && !tournament.finished && <th>Acciones</th>}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {groupedByDate[date].map((m: any) => (
-                                <tr key={m.id}>
-                                    <td>{m.team_1}</td>
-                                    <td>{m.gf !== null ? `${m.gf} - ${m.gc}` : 'Pendiente'}</td>
-                                    <td>{m.team_2}</td>
-                                    {isAdmin && !tournament.finished && (
-                                        <td>
-                                            <button onClick={() => router.push(`/dashboard/matches/${m.id}/update?tournament_id=${id}`)}>
-                                                Editar
-                                            </button>
-                                        </td>
-                                    )}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    <br />
+                <div className={style.secondaryDiv}>
+                    <h2 className={style.text2}>Campeon: {tournament.winner}</h2>
                 </div>
-            ))}
+            )}
+            <div className={style.secondaryDiv}>
+                {sortedDates.map(date => (
+                    <div key={date}>
+                        <h3>{date}</h3>
+                        <table className={style.table}>
+                            <thead>
+                                <tr className={style.tableHead}>
+                                    <th className={style.left}>Local</th>
+                                    <th>Resultado</th>
+                                    {isAdmin && !tournament.finished ? (
+                                        <th>Visitante</th>
+                                    ) : (
+                                        <th className={style.right}>Visitante</th>
+                                    )}
+
+                                    {isAdmin && !tournament.finished && <th className={style.right}>Acciones</th>}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {groupedByDate[date].map((m: any) => (
+                                    <tr key={m.id}>
+                                        <td>{m.team_1}</td>
+                                        <td>{m.gf !== null ? `${m.gf} - ${m.gc}` : 'Pendiente'}</td>
+                                        <td>{m.team_2}</td>
+                                        {isAdmin && !tournament.finished && (
+                                            <td>
+                                                <button onClick={() => router.push(`/dashboard/matches/${m.id}/update?tournament_id=${id}`)} className={style.btnEdit}>
+                                                    Editar
+                                                </button>
+                                            </td>
+                                        )}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        <br />
+                    </div>
+                ))}
+            </div>
 
             {phases.length > 0 && (
                 <>
-                    <hr />
-                    <h2>Fase Eliminatoria</h2>
-                    {phases.map((phase: any) => (
-                        <div key={phase.id}>
-                            <h3>{phase.name}</h3>
-                            <table border={1} cellPadding={8}>
-                                <thead>
-                                    <tr>
-                                        <th>Local</th>
-                                        <th>Resultado</th>
-                                        <th>Visitante</th>
-                                        {isAdmin && !tournament.finished && <th>Acciones</th>}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {phase.matches.map((m: any) => (
-                                        <tr key={m.id}>
-                                            <td>{m.team_1}</td>
-                                            <td>{m.gf !== null ? `${m.gf} - ${m.gc}` : 'Pendiente'}</td>
-                                            <td>{m.team_2}</td>
-                                            {isAdmin && !tournament.finished && (
-                                                <td>
-                                                    <button onClick={() => router.push(`/dashboard/phase-matches/${m.id}/update?tournament_id=${id}`)}>
-                                                        Editar
-                                                    </button>
-                                                </td>
+                    <h2 className={style.text2}>Fase Eliminatoria</h2>
+                    <div className={style.secondaryDiv}>
+                        {phases.map((phase: any) => (
+                            <div key={phase.id}>
+                                <h3>{phase.name}</h3>
+                                <table className={style.table}>
+                                    <thead>
+                                        <tr className={style.tableHead}>
+                                            <th className={style.left}>Local</th>
+                                            <th>Resultado</th>
+                                            {isAdmin && !tournament.finished ? (
+                                                <th>Visitante</th>
+                                            ) : (
+                                                <th className={style.right}>Visitante</th>
                                             )}
+                                            {isAdmin && !tournament.finished && <th className={style.right}>Acciones</th>}
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <br />
-                        </div>
-                    ))}
+                                    </thead>
+                                    <tbody>
+                                        {phase.matches.map((m: any) => (
+                                            <tr key={m.id}>
+                                                <td>{m.team_1}</td>
+                                                <td>{m.gf !== null ? `${m.gf} - ${m.gc}` : 'Pendiente'}</td>
+                                                <td>{m.team_2}</td>
+                                                {isAdmin && !tournament.finished && (
+                                                    <td>
+                                                        <button onClick={() => router.push(`/dashboard/phase-matches/${m.id}/update?tournament_id=${id}`)} className={style.btnEdit}>
+                                                            Editar
+                                                        </button>
+                                                    </td>
+                                                )}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <br />
+                            </div>
+                        ))}
+                    </div>
                 </>
             )}
         </div>

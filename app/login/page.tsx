@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import styles from './login.module.css';
+import Link from 'next/dist/client/link';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -31,22 +34,28 @@ export default function LoginPage() {
     };
 
     return (
-        <div>
-            <h1>Login</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Email</label><br />
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <div className={styles.mainContainer}>
+            <div className={styles.subContainer}>
+                <div style={{textAlign: 'center'}}>
+                    <Image src="/Graphics/Troyan.png" alt="Logo" width={150} height={150} />
                 </div>
-                <br />
-                <div>
-                    <label>Password</label><br />
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                </div>
-                <br />
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit">Login</button>
-            </form>
+                <form onSubmit={handleSubmit} className={styles.formContainer}>
+                    <div>
+                        <label className={styles.textLabel}>Email</label><br />
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={styles.textInput}/>
+                    </div>
+                    <br />
+                    <div>
+                        <label className={styles.textLabel}>Password</label><br />
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className={styles.textInput}/>
+                    </div>
+                    <br />
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    <button className={styles.btn} type="submit">Login</button>
+                </form>
+                <Link href="/dashboard" className={styles.link}>Regresar al Inicio</Link>
+                
+            </div>
         </div>
     );
 }
