@@ -116,7 +116,14 @@ export default function DashboardPage() {
                             {(teamsByTournament[t.id] || []).map((team: any, index: number) => (
                                 <tr key={team.id} >
                                     <td>{index + 1}</td>
-                                    <td>{team.name}</td>
+                                    <td>
+                                        <span
+                                            onClick={() => router.push(`/dashboard/teams/${team.id}/participants?tournament_id=${t.id}`)}
+                                            style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                        >
+                                            {team.name}
+                                        </span>
+                                    </td>
                                     <td>{team.pj}</td>
                                     <td>{team.pg}</td>
                                     <td>{team.pe}</td>

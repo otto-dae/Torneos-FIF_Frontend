@@ -13,8 +13,8 @@ export default function UpdateMatchPage() {
     const [form, setForm] = useState({ gf: '', gc: '', datematch: '' });
     const [match, setMatch] = useState<any>(null);
     const [error, setError] = useState('');
-
     const [tournamentId, setTournamentId] = useState('');
+    const [mode, setMode] = useState<'fecha' | 'puntuacion' | null>(null);
 
     useEffect(() => {
         fetch('http://127.0.0.1:8000/main/matches/')
@@ -33,69 +33,140 @@ export default function UpdateMatchPage() {
             });
     }, [id]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmitFecha = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-    
         const body: any = {};
         if (form.datematch) body.datematch = form.datematch;
-        body.gf = form.gf !== '' ? parseInt(form.gf) : 0;
-        body.gc = form.gc !== '' ? parseInt(form.gc) : 0;
-    
+
         const res = await fetch(`http://127.0.0.1:8000/main/matches/${id}/update/`, {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify(body),
         });
-    
         const data = await res.json();
-    
-        if (!res.ok) {
-            setError(data.error);
-            return;
-        }
-    
+        if (!res.ok) { setError(data.error); return; }
+        router.push(`/dashboard/tournaments/${tournamentId}`);
+    };
+
+    const handleSubmitPuntuacion = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        const body: any = {
+            gf: form.gf !== '' ? parseInt(form.gf) : 0,
+            gc: form.gc !== '' ? parseInt(form.gc) : 0,
+        };
+
+        const res = await fetch(`http://127.0.0.1:8000/main/matches/${id}/update/`, {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok) { setError(data.error); return; }
         router.push(`/dashboard/tournaments/${tournamentId}`);
     };
 
     return (
         <div>
             <header className={styles.Header}>
-                <Image src="/Graphics/Troyan.jpeg" alt="Logo" width={50} height={50} />
-                <h1 className={styles.text}>Editar Partido</h1>
+                <Image
+                    src="/Graphics/Troyan.png"
+                    alt="Logo"
+                    width={50}
+                    height={50}
+                    onClick={() => router.push('/dashboard')}
+                    style={{ cursor: 'pointer' }}
+                />
+                <h1 className={styles.text}>Editar Partido — {match?.team_1} vs {match?.team_2}</h1>
                 <button onClick={() => router.push(`/dashboard/tournaments/${tournamentId}`)} className={styles.btn2}>
-                     Back
+                    Back
                 </button>
             </header>
-            {match && <h1 className={styles.text2}> {match.team_1} vs {match.team_2} </h1>}
-            <div className={styles.mainContainer}>
-                <div className={styles.subContainer}>
-                    <form onSubmit={handleSubmit} className={styles.formContainer}>
-                        <div>
-                            <label className={styles.textLabel}>Fecha</label><br />
-                            <input className={styles.textInput} type="date" value={form.datematch} onChange={e => setForm({ ...form, datematch: e.target.value })} />
+
+                    {!mode && (
+                        <div className={styles.secondaryDiv}>
+                            <button onClick={() => setMode('fecha')} className={styles.btn2}>
+                                Editar Fecha
+                            </button>
+                            <button onClick={() => setMode('puntuacion')} className={styles.btn2}>
+                                Editar Puntuación
+                            </button>
                         </div>
-                        <br />
-                        <div>
-                            <label className={styles.textLabel}>Goles Local</label><br />
-                            <input className={styles.textInput} type="number" min="0" value={form.gf} onChange={e => setForm({ ...form, gf: e.target.value })} />
+                    )}
+
+                    {mode === 'fecha' && (
+                        <div className={styles.mainContainer}>
+                            <div className={styles.subContainer}>
+                                <form onSubmit={handleSubmitFecha} className={styles.formContainer}>
+                                    <div>
+                                        <label className={styles.textLabel}>Fecha</label><br />
+                                        <input
+                                            className={styles.textInput}
+                                            type="date"
+                                            value={form.datematch}
+                                            onChange={e => setForm({ ...form, datematch: e.target.value })}
+                                        />
+                                    </div>
+                                    <br />
+                                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <button type="button" onClick={() => setMode(null)} className={styles.btnCancel} style={{ margin: 0 }}>
+                                            Atrás
+                                        </button>
+                                        <button type="submit" className={styles.btn2} style={{ margin: 0 }}>
+                                            Guardar Fecha
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <br />
-                        <div>
-                            <label className={styles.textLabel}>Goles Visitante</label><br />
-                            <input className={styles.textInput} type="number" min="0" value={form.gc} onChange={e => setForm({ ...form, gc: e.target.value })} />
+                    )}
+
+                    {mode === 'puntuacion' && (
+                        <div className={styles.mainContainer}>
+                            <div className={styles.subContainer}>
+                                <form onSubmit={handleSubmitPuntuacion} className={styles.formContainer}>
+                                    <div>
+                                        <label className={styles.textLabel}>
+                                            Goles Local — {match?.team_1 ?? 'Local'}
+                                        </label><br />
+                                        <input
+                                            className={styles.textInput}
+                                            type="number"
+                                            min="0"
+                                            value={form.gf}
+                                            onChange={e => setForm({ ...form, gf: e.target.value })}
+                                        />
+                                    </div>
+                                    <br />
+                                    <div>
+                                        <label className={styles.textLabel}>
+                                            Goles Visitante — {match?.team_2 ?? 'Visitante'}
+                                        </label><br />
+                                        <input
+                                            className={styles.textInput}
+                                            type="number"
+                                            min="0"
+                                            value={form.gc}
+                                            onChange={e => setForm({ ...form, gc: e.target.value })}
+                                        />
+                                    </div>
+                                    <br />
+                                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <button type="button" onClick={() => setMode(null)} className={styles.btnCancel} style={{ margin: 0 }}>
+                                            Atrás
+                                        </button>
+                                        <button type="submit" className={styles.btn2} style={{ margin: 0 }}>
+                                            Guardar Puntuación
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <br />
-                        {error && <p style={{ color: 'red' }}>{error}</p>}
-                        <button type="button" onClick={() => router.push(`/dashboard/tournaments/${tournamentId}`)} className={styles.btnCancel}>
-                            Cancelar
-                        </button>
-                        <button type="submit" className={styles.btn2}>
-                            Guardar
-                        </button>
-                    </form>
+                    )}
+
                 </div>
-            </div>
-        </div>
     );
 }

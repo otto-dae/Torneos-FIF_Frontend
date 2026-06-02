@@ -96,7 +96,14 @@ function TeamsList() {
                                             <img src={team.logo} alt="logo" width={40} height={40} style={{ borderRadius: '50%' }}/>
                                         ) : 'Sin logo'}
                                     </td>
-                                    <td>{team.name}</td>
+                                    <td>
+                                        <span
+                                            onClick={() => router.push(`/dashboard/teams/${team.id}/participants?tournament_id=${tournament_id}`)}
+                                            style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                        >
+                                            {team.name}
+                                        </span>
+                                    </td>
                                     <td>
                                         <button 
                                             onClick={() => router.push(`/dashboard/teams/${team.id}/participants?tournament_id=${tournament_id}`)} 

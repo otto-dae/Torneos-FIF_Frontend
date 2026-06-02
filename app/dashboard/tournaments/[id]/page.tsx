@@ -138,9 +138,23 @@ useEffect(() => {
                             <tbody>
                                 {groupedByDate[date].map((m: any) => (
                                     <tr key={m.id}>
-                                        <td>{m.team_1}</td>
+                                        <td>
+                                            <span
+                                                onClick={() => router.push(`/dashboard/teams/${m.team_1_id}/participants?tournament_id=${id}`)}
+                                                style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                            >
+                                                {m.team_1}
+                                            </span>
+                                        </td>
                                         <td>{m.gf !== null ? `${m.gf} - ${m.gc}` : 'Pendiente'}</td>
-                                        <td>{m.team_2}</td>
+                                        <td>
+                                            <span
+                                                onClick={() => router.push(`/dashboard/teams/${m.team_2_id}/participants?tournament_id=${id}`)}
+                                                style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                            >
+                                                {m.team_2}
+                                            </span>
+                                        </td>
                                         {isAdmin && !tournament.finished && (
                                             <td>
                                                 <button onClick={() => router.push(`/dashboard/matches/${m.id}/update?tournament_id=${id}`)} className={style.btnEdit}>
@@ -180,9 +194,23 @@ useEffect(() => {
                                     <tbody>
                                         {phase.matches.map((m: any) => (
                                             <tr key={m.id}>
-                                                <td>{m.team_1}</td>
+                                                <td>
+                                                    <span
+                                                        onClick={() => router.push(`/dashboard/teams/${m.team_1_id}/participants?tournament_id=${id}`)}
+                                                        style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                                    >
+                                                        {m.team_1}
+                                                    </span>
+                                                </td>
                                                 <td>{m.gf !== null ? `${m.gf} - ${m.gc}` : 'Pendiente'}</td>
-                                                <td>{m.team_2}</td>
+                                                <td>
+                                                    <span
+                                                        onClick={() => router.push(`/dashboard/teams/${m.team_2_id}/participants?tournament_id=${id}`)}
+                                                        style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                                    >
+                                                        {m.team_2}
+                                                    </span>
+                                                </td>
                                                 {isAdmin && !tournament.finished && (
                                                     <td>
                                                         <button onClick={() => router.push(`/dashboard/phase-matches/${m.id}/update?tournament_id=${id}`)} className={style.btnEdit}>

@@ -58,12 +58,21 @@ function ParticipantsContent() {
                     style={{ cursor: 'pointer' }}
                 />
                 <h1 className={styles.text}>{teamName ? `${teamName} — Participantes` : 'Participantes'}</h1>
-                <button 
-                    onClick={() => router.push(`/dashboard/teams?tournament_id=${tournament_id}`)} 
-                    className={styles.btn2}
-                >
-                    Back
-                </button>
+                {isAdmin ? (
+                    <button 
+                        onClick={() => router.push(`/dashboard/teams?tournament_id=${tournament_id}`)} 
+                        className={styles.btn2}
+                    >
+                        Back
+                    </button>
+                ) : (
+                    <button 
+                        onClick={() => router.push(`/dashboard`)} 
+                        className={styles.btn2}
+                    >
+                        Back
+                    </button>
+                )}
             </header>
 
             <div className={styles.mainContainer} style={{ height: 'auto', padding: '40px 20px' }}>
@@ -84,9 +93,11 @@ function ParticipantsContent() {
                     <table className={styles.table} style={{ width: '100%' }}>
                         <thead>
                             <tr className={styles.tableHead}>
-                                <th className={styles.left}>Nombre</th>
-                                <th>Teléfono</th>
-                                {isAdmin ? <th>Email</th> : <th className={styles.right}>Email</th>}
+                                <th className={isAdmin ? styles.left : `${styles.left} ${styles.right}`}>
+                                    Nombre
+                                </th>
+                                {isAdmin && <th>Teléfono</th>}
+                                {isAdmin && <th>Email</th>}
                                 {isAdmin && <th className={styles.right}>Acciones</th>}
                             </tr>
                         </thead>
@@ -94,8 +105,8 @@ function ParticipantsContent() {
                             {participants.map((p: any) => (
                                 <tr key={p.id}>
                                     <td>{p.name}</td>
-                                    <td>{p.phone}</td>
-                                    <td>{p.email}</td>
+                                    {isAdmin && <td>{p.phone}</td>}
+                                    {isAdmin && <td>{p.email}</td>}
                                     {isAdmin && (
                                         <td>
                                             <button 

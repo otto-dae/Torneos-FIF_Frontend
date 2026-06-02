@@ -68,7 +68,7 @@ export default function CreateTournamentPage() {
                     onClick={() => router.push('/dashboard')}
                     style={{ cursor: 'pointer' }}
                 />
-                <h1 className={style.text}>Create Tournament</h1>
+                <h1 className={style.text}>Crear Torneo</h1>
                 <button onClick={() => router.push('/dashboard')} className={style.btn2}>
                      Back
                 </button>
